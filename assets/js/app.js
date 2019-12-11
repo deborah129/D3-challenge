@@ -24,7 +24,7 @@ var svg = d3.select("#scatter")
 // Append a group area, then set its margins
 var chartGroup = svg.append("g")
   .attr("transform", `translate(${margin.left}, ${margin.top})`);
-  
+
 // Load data from data.csv
 d3.csv("assets/data/data.csv").then(function(censusData) {
 
@@ -37,7 +37,8 @@ d3.csv("assets/data/data.csv").then(function(censusData) {
       data.healthcare = parseFloat(data.healthcare);
       data.smokes = parseFloat(data.smokes);
     //   console.log(data.abbr);
-    });
+  
+  });
     console.log(censusData);
 // Configure a linear scale with a range between the chartHeight and 0
 var xLinearScale = d3.scaleLinear()
@@ -72,7 +73,18 @@ var yLinearScale = d3.scaleLinear()
     .attr("cy", d => yLinearScale(d.healthcare))
     .attr("r", "10")
     .attr("fill", "lightblue")
-    .attr("opacity", ".75");
+    .attr("opacity", ".75")
+    .on('mouseover', function(data){
+      tooltip.show(data);
+    })
+    .on('mouseout', function(data, index){
+      tooltip.hide(data);
+    })
+    var tooltip = d3.tip()
+    .attr("class", "tooltip")
+    .offset([-8, 0])
+    .html(function(d) { return (`${d.state}<br>Poverty:${d.poverty}%<br> Lacks Healthcare:${d.healthcare}%`)});
+    svg.call(tooltip);
 
     var textGroup = chartGroup.selectAll("text.abbr")
     .data(censusData)
